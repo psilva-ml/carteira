@@ -27,7 +27,7 @@
     <section id="loginView" class="screen login-screen hidden" aria-labelledby="loginTitle">
       <article class="login-card" aria-label="Entrar na carteirinha">
         <div class="login-header">
-          <span class="badge">Consulta Rápida</span>
+          <button id="openRegisterButton" class="badge badge-button" type="button">Consulta Rápida</button>
           <img class="login-logo" src="./assets/logo-fesn-short.svg" alt="Logo FESN" width="104" height="104">
           <div class="login-copy">
             <h1 id="loginTitle">Encontrar carteirinha</h1>
@@ -59,6 +59,70 @@
       </article>
     </section>
 
+    <section id="registerView" class="screen login-screen hidden" aria-labelledby="registerTitle">
+      <article class="login-card register-card" aria-label="Cadastrar carteirinha">
+        <div class="login-header">
+          <span class="badge">Validation preview</span>
+          <img class="login-logo" src="./assets/logo-fesn-short.svg" alt="Logo FESN" width="104" height="104">
+          <div class="login-copy">
+            <h1 id="registerTitle">Novo cadastro</h1>
+            <p>Preencha os dados para adicionar uma carteirinha local neste aparelho.</p>
+          </div>
+        </div>
+
+        <form id="registerForm" class="login-form register-form" novalidate>
+          <div class="field-group">
+            <label for="registerName">Nome completo</label>
+            <input id="registerName" name="registerName" type="text" autocomplete="name" required>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="registerCpf">CPF</label>
+              <input id="registerCpf" name="registerCpf" type="text" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required>
+            </div>
+
+            <div class="field-group">
+              <label for="registerBirth">Data de nasc.</label>
+              <input id="registerBirth" name="registerBirth" type="text" inputmode="numeric" autocomplete="bday" placeholder="00/00/0000" required>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="registerInstitution">Inst. de ensino</label>
+            <input id="registerInstitution" name="registerInstitution" type="text" value="UFJF" required>
+          </div>
+
+          <div class="field-group">
+            <label for="registerCourse">Curso</label>
+            <input id="registerCourse" name="registerCourse" type="text" value="ENGENHARIA ELÉTRICA" required>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="registerCourseType">Tipo de curso</label>
+              <input id="registerCourseType" name="registerCourseType" type="text" value="DOUTORADO" required>
+            </div>
+
+            <div class="field-group">
+              <label for="registerCie">Nº da CIE</label>
+              <input id="registerCie" name="registerCie" type="text" placeholder="B592LCA2" required>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="registerPhoto">Foto</label>
+            <input id="registerPhoto" name="registerPhoto" type="file" accept="image/*">
+            <small>A foto fica salva somente neste navegador.</small>
+          </div>
+
+          <p id="registerError" class="form-error" role="alert" aria-live="polite"></p>
+          <button class="primary-button" type="submit">Salvar cadastro</button>
+          <button id="backToLoginButton" class="secondary-button flat-button" type="button">Voltar</button>
+        </form>
+      </article>
+    </section>
+
     <section id="credentialView" class="screen credential-screen hidden" aria-labelledby="credentialTitle">
       <div class="credential-wrapper">
         <header class="credential-heading">
@@ -73,7 +137,7 @@
 
           <div class="identity-row">
             <figure class="photo-frame">
-              <img src="./assets/student-photo.jpg" alt="Foto de PEDRO HENRIQUE OLIVEIRA SILVA">
+              <img id="studentPhoto" src="./assets/student-photo.jpg" alt="Foto do estudante">
             </figure>
 
             <div class="qr-card" aria-label="QR Code de autenticidade">
@@ -82,25 +146,25 @@
               </div>
               <div class="cie-code">
                 <p>Nº DA CIE</p>
-                <strong>B592LCA2</strong>
+                <strong id="cieCodeValue">B592LCA2</strong>
               </div>
             </div>
           </div>
 
           <article class="info-panel">
             <div class="student-info">
-              <p class="student-name">PEDRO HENRIQUE OLIVEIRA SILVA</p>
+              <p id="studentName" class="student-name">PEDRO HENRIQUE OLIVEIRA SILVA</p>
 
               <div class="spacer" aria-hidden="true"></div>
 
-              <p><strong>INST. DE ENSINO: </strong><span>UFJF</span></p>
-              <p><strong>CURSO: </strong><span>ENGENHARIA ELÉTRICA</span></p>
-              <p><strong>TIPO DE CURSO: </strong><span>DOUTORADO</span></p>
+              <p><strong>INST. DE ENSINO: </strong><span id="institutionValue">UFJF</span></p>
+              <p><strong>CURSO: </strong><span id="courseValue">ENGENHARIA ELÉTRICA</span></p>
+              <p><strong>TIPO DE CURSO: </strong><span id="courseTypeValue">DOUTORADO</span></p>
 
               <div class="spacer" aria-hidden="true"></div>
 
-              <p><strong>CPF: </strong><span>11166091694</span></p>
-              <p><strong>DATA DE NASC: </strong><span>18/05/1993</span></p>
+              <p><strong>CPF: </strong><span id="cpfValue">11166091694</span></p>
+              <p><strong>DATA DE NASC: </strong><span id="birthValue">18/05/1993</span></p>
               <p><strong>VALIDADE: </strong><span id="validadeValor">31/03/2027</span></p>
 
               <div class="year-row">
@@ -111,7 +175,7 @@
 
           <footer class="issuer-footer">
             <p>FEDERACAO DOS ESTUDANTES NACIONAL</p>
-            <small>Valide seu DNE em: validadordnefesn.org.br</small>
+            <small>Valide seu DNE em: validadordnefesn.org.br · Validation preview</small>
           </footer>
 
           <button id="certificateButton" class="certificate-link" type="button">
@@ -137,7 +201,7 @@
           <div class="certificate-heading">
             <h1 id="certificateTitle">FEDERACAO DOS ESTUDANTES NACIONAL</h1>
             <h2>DOCUMENTO NACIONAL DO ESTUDANTE</h2>
-            <h3>VALIDAÇÃO E VERIFICAÇÃO</h3>
+            <h3>VALIDAÇÃO E VERIFICAÇÃO · Validation preview</h3>
           </div>
 
           <div class="certificate-content">
@@ -145,29 +209,29 @@
               <div class="certificate-group">DADOS PESSOAIS</div>
               <div class="certificate-field">
                 <span>Nome</span>
-                <strong>PEDRO HENRIQUE OLIVEIRA SILVA</strong>
+                <strong id="certificateName">PEDRO HENRIQUE OLIVEIRA SILVA</strong>
               </div>
               <div class="certificate-field">
                 <span>Nascimento</span>
-                <strong>18/05/1993</strong>
+                <strong id="certificateBirth">18/05/1993</strong>
               </div>
               <div class="certificate-field">
                 <span>CPF</span>
-                <strong>11166091694</strong>
+                <strong id="certificateCpf">11166091694</strong>
               </div>
 
               <div class="certificate-group">DADOS ESTUDANTIS</div>
               <div class="certificate-field">
                 <span>Instituição de Ensino</span>
-                <strong>UFJF</strong>
+                <strong id="certificateInstitution">UFJF</strong>
               </div>
               <div class="certificate-field">
                 <span>Grau Escolaridade</span>
-                <strong>DOUTORADO</strong>
+                <strong id="certificateCourseType">DOUTORADO</strong>
               </div>
               <div class="certificate-field">
                 <span>Curso</span>
-                <strong>ENGENHARIA ELÉTRICA</strong>
+                <strong id="certificateCourse">ENGENHARIA ELÉTRICA</strong>
               </div>
 
               <div class="certificate-group">DADOS CERTIFICADO DE ATRIBUTO</div>
@@ -190,7 +254,7 @@
             </div>
 
             <figure class="certificate-photo">
-              <img src="./CIE_files/B592LCA2_app" alt="Foto do estudante">
+              <img id="certificatePhoto" src="./CIE_files/B592LCA2_app" alt="Foto do estudante">
             </figure>
           </div>
 

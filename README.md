@@ -1,9 +1,11 @@
 # DNE FESN PWA
 
-App estático em HTML, CSS e JavaScript puro, com login simulado por CPF, tela de credencial e cache offline via Service Worker.
+App estático em HTML, CSS e JavaScript puro, com login simulado por CPF, cadastro local, tela de credencial e cache offline via Service Worker.
 O QR Code da credencial aponta para a página local `CIE.html`, que também é salva no cache offline junto com a pasta `CIE_files`.
 Ao abrir o app sem sessão ativa, ele mostra as imagens da pasta `telas` antes do login: `tela1.jpeg` por 3 segundos, depois `tela2.jpeg` por toque e `tela3.jpeg` por toque.
 O botão **Certificado** abre uma tela interna do próprio app, sem navegar para `/CIE.html`, para evitar loop de redirecionamento em hospedagens com cache antigo.
+A área **Consulta Rápida** na tela de login abre o cadastro de apresentação. Os dados e a foto ficam salvos somente no `localStorage` do navegador, e o login exibe a carteirinha correspondente ao CPF ou Nº da CIE cadastrado.
+O texto discreto **Validation preview** aparece integrado no cadastro, no rodapé da carteirinha e na tela interna de certificado.
 
 Ao publicar, o QR Code usa automaticamente o domínio aberto no navegador. Exemplo: se o app estiver em `https://seu-projeto.pages.dev`, a câmera vai ler `https://seu-projeto.pages.dev/CIE.html`.
 
@@ -25,10 +27,11 @@ Depois abra a URL exibida no terminal, normalmente `http://localhost:3000`.
 ## Como testar no navegador
 
 1. Abra o app pelo endereço local.
-2. Preencha CPF/código com qualquer valor.
-3. Clique em **Entrar**.
-4. A tela da credencial deve aparecer.
-5. Clique em **Buscar outra carteirinha** para limpar a sessão e voltar ao login.
+2. Clique em **Consulta Rápida** para cadastrar um CPF, dados e foto.
+3. Salve o cadastro.
+4. Volte ou faça login usando o CPF/código cadastrado.
+5. A tela da credencial deve aparecer com os dados salvos.
+6. Clique em **Buscar outra carteirinha** para limpar a sessão e voltar ao login.
 
 ## Como testar offline
 

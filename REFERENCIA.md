@@ -18,16 +18,20 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 
 ## Plano aplicado
 
-1. Criar uma página única em `index.html` com duas seções: login e credencial.
+1. Criar uma página única em `index.html` com introdução, login, cadastro local, credencial e certificado interno.
 2. Usar `style.css` para recriar o visual mobile-first das páginas salvas.
-3. Usar `app.js` para validar campos preenchidos, simular sessão com `localStorage`, navegar entre telas e fazer logout.
+3. Usar `app.js` para validar campos preenchidos, salvar cadastros no `localStorage`, simular sessão, navegar entre telas e fazer logout.
 4. Criar `manifest.json` para instalação como PWA.
 5. Criar `service-worker.js` para cachear HTML, CSS, JS e imagens.
 6. Documentar execução local, testes offline, GitHub, Cloudflare Pages e instalação no iPhone no `README.md`.
 
 ## Observações
 
-- O login é apenas uma simulação: qualquer CPF/código preenchido é aceito.
+- O login é apenas uma simulação local: aceita o CPF/código do cadastro salvo ou o cadastro padrão já existente.
+- A área `Consulta Rápida` abre o cadastro de apresentação.
+- O cadastro salva nome, CPF, nascimento, instituição, curso, tipo de curso, Nº da CIE e foto no `localStorage` do navegador.
+- A credencial e o certificado interno renderizam os dados de acordo com o CPF/código usado no login.
+- O texto discreto `Validation preview` fica integrado no cadastro, no rodapé da credencial e no cabeçalho do certificado interno.
 - Não há backend, banco de dados, frameworks ou bibliotecas externas.
 - O app usa caminhos relativos para funcionar no Cloudflare Pages.
 - A credencial usa UFJF, Engenharia Elétrica e Doutorado.

@@ -1,29 +1,80 @@
-// Chave usada para simular uma sessão local, sem backend.
+// Chaves usadas para simular sessão e cadastros locais, sem backend.
 const SESSION_KEY = "carteirinha_fesn_sessao";
+const REGISTRY_KEY = "carteirinha_fesn_cadastros";
 const TELAS_INICIAIS = [
   "./telas/tela1.jpeg",
   "./telas/tela2.jpeg",
   "./telas/tela3.jpeg",
 ];
 
+const ESTUDANTE_PADRAO = {
+  nome: "PEDRO HENRIQUE OLIVEIRA SILVA",
+  cpf: "11166091694",
+  nascimento: "18/05/1993",
+  instituicao: "UFJF",
+  curso: "ENGENHARIA ELÉTRICA",
+  tipoCurso: "DOUTORADO",
+  cie: "B592LCA2",
+  foto: "./assets/student-photo.jpg",
+  fotoCertificado: "./CIE_files/B592LCA2_app",
+};
+
 const telas = {
   introducao: document.querySelector("#introView"),
   login: document.querySelector("#loginView"),
+  cadastro: document.querySelector("#registerView"),
   credencial: document.querySelector("#credentialView"),
   certificado: document.querySelector("#certificateView"),
 };
 
 const introButton = document.querySelector("#introButton");
 const introImage = document.querySelector("#introImage");
+const openRegisterButton = document.querySelector("#openRegisterButton");
 const formulario = document.querySelector("#loginForm");
+const formularioCadastro = document.querySelector("#registerForm");
 const campoDocumento = document.querySelector("#documento");
 const mensagemErro = document.querySelector("#loginError");
+const mensagemCadastro = document.querySelector("#registerError");
+const backToLoginButton = document.querySelector("#backToLoginButton");
 const botaoLogout = document.querySelector("#logoutButton");
 const validadeValor = document.querySelector("#validadeValor");
 const validadeCertificado = document.querySelector("#validadeCertificado");
 const anoAtual = document.querySelector("#anoAtual");
 const certificateButton = document.querySelector("#certificateButton");
 const certificateBackButton = document.querySelector("#certificateBackButton");
+
+const camposCadastro = {
+  nome: document.querySelector("#registerName"),
+  cpf: document.querySelector("#registerCpf"),
+  nascimento: document.querySelector("#registerBirth"),
+  instituicao: document.querySelector("#registerInstitution"),
+  curso: document.querySelector("#registerCourse"),
+  tipoCurso: document.querySelector("#registerCourseType"),
+  cie: document.querySelector("#registerCie"),
+  foto: document.querySelector("#registerPhoto"),
+};
+
+const camposCredencial = {
+  foto: document.querySelector("#studentPhoto"),
+  nome: document.querySelector("#studentName"),
+  instituicao: document.querySelector("#institutionValue"),
+  curso: document.querySelector("#courseValue"),
+  tipoCurso: document.querySelector("#courseTypeValue"),
+  cpf: document.querySelector("#cpfValue"),
+  nascimento: document.querySelector("#birthValue"),
+  cie: document.querySelector("#cieCodeValue"),
+};
+
+const camposCertificado = {
+  foto: document.querySelector("#certificatePhoto"),
+  nome: document.querySelector("#certificateName"),
+  nascimento: document.querySelector("#certificateBirth"),
+  cpf: document.querySelector("#certificateCpf"),
+  instituicao: document.querySelector("#certificateInstitution"),
+  tipoCurso: document.querySelector("#certificateCourseType"),
+  curso: document.querySelector("#certificateCourse"),
+};
+
 let telaInicialAtual = 0;
 let timerTelaInicial = null;
 
@@ -38,10 +89,15 @@ function iniciarApp() {
 
 function configurarEventos() {
   introButton.addEventListener("click", avancarTelaInicial);
+  openRegisterButton.addEventListener("click", mostrarCadastro);
   formulario.addEventListener("submit", entrar);
+  formularioCadastro.addEventListener("submit", cadastrarEstudante);
+  backToLoginButton.addEventListener("click", mostrarLogin);
   botaoLogout.addEventListener("click", sair);
   certificateButton.addEventListener("click", mostrarCertificado);
   certificateBackButton.addEventListener("click", mostrarCredencial);
+  camposCadastro.cpf.addEventListener("input", aplicarMascaraCpf);
+  camposCadastro.nascimento.addEventListener("input", aplicarMascaraData);
   window.addEventListener("hashchange", sincronizarRota);
 }
 
@@ -57,6 +113,149 @@ function entrar(evento) {
     return;
   }
 
+  const estudante = buscarEstudante(documento);
+
+  if (!estudante) {
+    mostrarErro("Carteirinha não encontrada. Cadastre os dados em Consulta Rápida.");
+    return;
+  }
+
+  salvarSessao(documento);
+  formulario.reset();
+  renderizarEstudante(estudante);
+  mostrarCredencial();
+}
+
+async function cadastrarEstudante(evento) {
+  evento.preventDefault();
+  limparErroCadastro();
+
+  const cpf = somenteNumeros(camposCadastro.cpf.value);
+  const cadastro = {
+    nome: normalizarTexto(camposCadastro.nome.value),
+    cpf,
+    nascimento: camposCadastro.nascimento.value.trim(),
+    instituicao: normalizarTexto(camposCadastro.instituicao.value),
+    curso: normalizarTexto(camposCadastro.curso.value),
+    tipoCurso: normalizarTexto(camposCadastro.tipoCurso.value),
+    cie: camposCadastro.cie.value.trim().toUpperCase(),
+  };
+
+  if (!cadastro.nome || !cadastro.cpf || !cadastro.nascimento || !cadastro.instituicao || !cadastro.curso || !cadastro.tipoCurso || !cadastro.cie) {
+    mostrarErroCadastro("Preencha todos os campos obrigatórios.");
+    return;
+  }
+
+  if (cadastro.cpf.length < 3) {
+    mostrarErroCadastro("Informe um CPF válido para localizar depois.");
+    return;
+  }
+
+  try {
+    const cadastroExistente = buscarCadastroSalvo(cadastro.cpf);
+    const foto = await obterFotoCadastro(camposCadastro.foto.files[0], cadastroExistente);
+
+    salvarCadastro({ ...cadastro, foto, fotoCertificado: foto });
+    salvarSessao(cadastro.cpf);
+    formularioCadastro.reset();
+    renderizarEstudante(buscarEstudante(cadastro.cpf));
+    mostrarCredencial();
+  } catch (erro) {
+    mostrarErroCadastro(erro.message || "Não foi possível salvar o cadastro.");
+  }
+}
+
+function salvarCadastro(cadastro) {
+  const cadastros = carregarCadastros();
+  const cpfCadastro = somenteNumeros(cadastro.cpf);
+  const cieCadastro = normalizarCodigo(cadastro.cie);
+  const atualizados = cadastros.filter((item) => {
+    return somenteNumeros(item.cpf) !== cpfCadastro && normalizarCodigo(item.cie) !== cieCadastro;
+  });
+
+  atualizados.push({
+    ...cadastro,
+    cpf: cpfCadastro,
+    atualizadoEm: new Date().toISOString(),
+  });
+
+  try {
+    localStorage.setItem(REGISTRY_KEY, JSON.stringify(atualizados));
+  } catch (erro) {
+    throw new Error("A foto ficou grande demais para salvar neste navegador.");
+  }
+}
+
+function carregarCadastros() {
+  try {
+    const cadastros = JSON.parse(localStorage.getItem(REGISTRY_KEY));
+    return Array.isArray(cadastros) ? cadastros : [];
+  } catch (erro) {
+    localStorage.removeItem(REGISTRY_KEY);
+    return [];
+  }
+}
+
+function buscarCadastroSalvo(valor) {
+  const cpf = somenteNumeros(valor);
+  return carregarCadastros().find((cadastro) => somenteNumeros(cadastro.cpf) === cpf) || null;
+}
+
+function buscarEstudante(valor) {
+  const cpf = somenteNumeros(valor);
+  const codigo = normalizarCodigo(valor);
+  const todos = carregarCadastros().concat(ESTUDANTE_PADRAO);
+
+  return todos.find((cadastro) => {
+    return somenteNumeros(cadastro.cpf) === cpf || normalizarCodigo(cadastro.cie) === codigo;
+  }) || null;
+}
+
+async function obterFotoCadastro(arquivo, cadastroExistente) {
+  if (!arquivo) {
+    return cadastroExistente?.foto || ESTUDANTE_PADRAO.foto;
+  }
+
+  if (!arquivo.type.startsWith("image/")) {
+    throw new Error("Envie um arquivo de imagem.");
+  }
+
+  return reduzirImagem(arquivo);
+}
+
+function reduzirImagem(arquivo) {
+  return new Promise((resolve, reject) => {
+    const leitor = new FileReader();
+
+    leitor.addEventListener("error", () => reject(new Error("Não foi possível ler a foto.")));
+    leitor.addEventListener("load", () => {
+      const imagem = new Image();
+
+      imagem.addEventListener("error", () => reject(new Error("Não foi possível carregar a foto.")));
+      imagem.addEventListener("load", () => {
+        const tamanhoMaximo = 720;
+        const escala = Math.min(1, tamanhoMaximo / Math.max(imagem.width, imagem.height));
+        const largura = Math.max(1, Math.round(imagem.width * escala));
+        const altura = Math.max(1, Math.round(imagem.height * escala));
+        const canvas = document.createElement("canvas");
+        const contexto = canvas.getContext("2d");
+
+        canvas.width = largura;
+        canvas.height = altura;
+        contexto.fillStyle = "#ffffff";
+        contexto.fillRect(0, 0, largura, altura);
+        contexto.drawImage(imagem, 0, 0, largura, altura);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      });
+
+      imagem.src = leitor.result;
+    });
+
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+function salvarSessao(documento) {
   const sessao = {
     autenticado: true,
     documento,
@@ -64,8 +263,21 @@ function entrar(evento) {
   };
 
   localStorage.setItem(SESSION_KEY, JSON.stringify(sessao));
-  formulario.reset();
-  mostrarCredencial();
+}
+
+function obterEstudanteDaSessao() {
+  try {
+    const sessao = JSON.parse(localStorage.getItem(SESSION_KEY));
+
+    if (!sessao || !sessao.autenticado) {
+      return null;
+    }
+
+    return buscarEstudante(sessao.documento);
+  } catch (erro) {
+    localStorage.removeItem(SESSION_KEY);
+    return null;
+  }
 }
 
 function sair() {
@@ -74,22 +286,23 @@ function sair() {
 }
 
 function temSessaoAtiva() {
-  try {
-    const sessao = JSON.parse(localStorage.getItem(SESSION_KEY));
-    return Boolean(sessao && sessao.autenticado);
-  } catch (erro) {
-    localStorage.removeItem(SESSION_KEY);
-    return false;
-  }
+  return Boolean(obterEstudanteDaSessao());
 }
 
 function sincronizarRota() {
+  if (window.location.hash === "#cadastro") {
+    alternarTela("cadastro", false);
+    return;
+  }
+
   if (window.location.hash === "#credencial" && temSessaoAtiva()) {
+    renderizarEstudante(obterEstudanteDaSessao());
     alternarTela("credencial", false);
     return;
   }
 
   if (window.location.hash === "#certificado" && temSessaoAtiva()) {
+    renderizarEstudante(obterEstudanteDaSessao());
     alternarTela("certificado", false);
     return;
   }
@@ -100,15 +313,38 @@ function sincronizarRota() {
 }
 
 function mostrarLogin() {
+  limparErro();
   alternarTela("login", true);
   campoDocumento.focus();
 }
 
+function mostrarCadastro() {
+  limparErroCadastro();
+  alternarTela("cadastro", true);
+  camposCadastro.nome.focus();
+}
+
 function mostrarCredencial() {
+  const estudante = obterEstudanteDaSessao();
+
+  if (!estudante) {
+    mostrarLogin();
+    return;
+  }
+
+  renderizarEstudante(estudante);
   alternarTela("credencial", true);
 }
 
 function mostrarCertificado() {
+  const estudante = obterEstudanteDaSessao();
+
+  if (!estudante) {
+    mostrarLogin();
+    return;
+  }
+
+  renderizarEstudante(estudante);
   alternarTela("certificado", true);
 }
 
@@ -141,25 +377,27 @@ function exibirTelaInicial(indice) {
 function alternarTela(nomeTela, atualizarHash) {
   const abrirIntroducao = nomeTela === "introducao";
   const abrirLogin = nomeTela === "login";
+  const abrirCadastro = nomeTela === "cadastro";
   const abrirCredencial = nomeTela === "credencial";
   const abrirCertificado = nomeTela === "certificado";
 
   telas.introducao.classList.toggle("hidden", !abrirIntroducao);
   telas.login.classList.toggle("hidden", !abrirLogin);
+  telas.cadastro.classList.toggle("hidden", !abrirCadastro);
   telas.credencial.classList.toggle("hidden", !abrirCredencial);
   telas.certificado.classList.toggle("hidden", !abrirCertificado);
 
   document.title = abrirCredencial || abrirCertificado ? "Minha Carteirinha | DNE FESN" : "DNE FESN";
 
   if (atualizarHash) {
-    const hash = abrirCredencial ? "#credencial" : abrirCertificado ? "#certificado" : "#login";
+    const hash = abrirCredencial ? "#credencial" : abrirCertificado ? "#certificado" : abrirCadastro ? "#cadastro" : "#login";
     history.replaceState(null, "", hash);
   }
 }
 
 function mostrarErro(texto) {
   mensagemErro.textContent = texto;
-  campoDocumento.setAttribute("aria-invalid", String(!campoDocumento.value.trim()));
+  campoDocumento.setAttribute("aria-invalid", "true");
 }
 
 function limparErro() {
@@ -175,307 +413,86 @@ function atualizarDadosDinamicos() {
   anoAtual.textContent = String(ano);
 }
 
-function desenharQrCode(canvas, texto) {
-  const matriz = criarQrCode(texto);
-  const contexto = canvas.getContext("2d");
-  const margem = 4;
-  const modulos = matriz.length + margem * 2;
-  const escala = Math.floor(canvas.width / modulos);
-  const deslocamento = Math.floor((canvas.width - modulos * escala) / 2);
+function renderizarEstudante(estudante) {
+  const dados = completarDados(estudante);
+  const validade = obterValidade();
+  const ano = String(new Date().getFullYear());
 
-  contexto.fillStyle = "#ffffff";
-  contexto.fillRect(0, 0, canvas.width, canvas.height);
-  contexto.fillStyle = "#000000";
+  camposCredencial.foto.src = dados.foto;
+  camposCredencial.foto.alt = `Foto de ${dados.nome}`;
+  camposCredencial.nome.textContent = dados.nome;
+  camposCredencial.instituicao.textContent = dados.instituicao;
+  camposCredencial.curso.textContent = dados.curso;
+  camposCredencial.tipoCurso.textContent = dados.tipoCurso;
+  camposCredencial.cpf.textContent = dados.cpf;
+  camposCredencial.nascimento.textContent = dados.nascimento;
+  camposCredencial.cie.textContent = dados.cie;
+  validadeValor.textContent = validade;
+  anoAtual.textContent = ano;
 
-  matriz.forEach((linha, y) => {
-    linha.forEach((ativo, x) => {
-      if (!ativo) {
-        return;
-      }
-
-      contexto.fillRect(
-        deslocamento + (x + margem) * escala,
-        deslocamento + (y + margem) * escala,
-        escala,
-        escala
-      );
-    });
-  });
+  camposCertificado.foto.src = dados.fotoCertificado || dados.foto;
+  camposCertificado.foto.alt = `Foto de ${dados.nome}`;
+  camposCertificado.nome.textContent = dados.nome;
+  camposCertificado.nascimento.textContent = dados.nascimento;
+  camposCertificado.cpf.textContent = dados.cpf;
+  camposCertificado.instituicao.textContent = dados.instituicao;
+  camposCertificado.tipoCurso.textContent = dados.tipoCurso;
+  camposCertificado.curso.textContent = dados.curso;
+  validadeCertificado.textContent = validade;
 }
 
-function criarQrCode(texto) {
-  const versao = 5;
-  const tamanho = 21 + (versao - 1) * 4;
-  const codewordsDados = criarDadosQr(texto, 108);
-  const codewordsErro = criarCorrecaoErro(codewordsDados, 26);
-  const codewords = codewordsDados.concat(codewordsErro);
-  const modulos = criarMatriz(tamanho, false);
-  const reservado = criarMatriz(tamanho, false);
-
-  function definir(row, col, ativo, ehFuncao) {
-    if (row < 0 || row >= tamanho || col < 0 || col >= tamanho) {
-      return;
-    }
-
-    modulos[row][col] = ativo;
-
-    if (ehFuncao) {
-      reservado[row][col] = true;
-    }
-  }
-
-  desenharPadraoLocalizacao(3, 3, definir);
-  desenharPadraoLocalizacao(3, tamanho - 4, definir);
-  desenharPadraoLocalizacao(tamanho - 4, 3, definir);
-  desenharPadraoAlinhamento(30, 30, definir);
-  desenharSincronismo(tamanho, definir);
-  desenharFormato(tamanho, 0, definir);
-  preencherDados(codewords, modulos, reservado, 0);
-
-  return modulos;
+function completarDados(estudante) {
+  return {
+    nome: (estudante.nome || ESTUDANTE_PADRAO.nome).toUpperCase(),
+    cpf: somenteNumeros(estudante.cpf || ESTUDANTE_PADRAO.cpf),
+    nascimento: estudante.nascimento || ESTUDANTE_PADRAO.nascimento,
+    instituicao: (estudante.instituicao || ESTUDANTE_PADRAO.instituicao).toUpperCase(),
+    curso: (estudante.curso || ESTUDANTE_PADRAO.curso).toUpperCase(),
+    tipoCurso: (estudante.tipoCurso || ESTUDANTE_PADRAO.tipoCurso).toUpperCase(),
+    cie: (estudante.cie || ESTUDANTE_PADRAO.cie).toUpperCase(),
+    foto: estudante.foto || ESTUDANTE_PADRAO.foto,
+    fotoCertificado: estudante.fotoCertificado || estudante.foto || ESTUDANTE_PADRAO.fotoCertificado,
+  };
 }
 
-function criarDadosQr(texto, capacidadeBytes) {
-  const bytes = Array.from(new TextEncoder().encode(texto));
-  const bits = [];
-
-  if (bytes.length > capacidadeBytes) {
-    throw new Error("Texto grande demais para o QR Code local.");
-  }
-
-  adicionarBits(bits, 0b0100, 4);
-  adicionarBits(bits, bytes.length, 8);
-  bytes.forEach((byte) => adicionarBits(bits, byte, 8));
-
-  const capacidadeBits = capacidadeBytes * 8;
-  adicionarBits(bits, 0, Math.min(4, capacidadeBits - bits.length));
-
-  while (bits.length % 8 !== 0) {
-    bits.push(0);
-  }
-
-  const dados = [];
-
-  for (let i = 0; i < bits.length; i += 8) {
-    let byte = 0;
-
-    for (let j = 0; j < 8; j += 1) {
-      byte = (byte << 1) | bits[i + j];
-    }
-
-    dados.push(byte);
-  }
-
-  for (let pad = 0; dados.length < capacidadeBytes; pad += 1) {
-    dados.push(pad % 2 === 0 ? 0xec : 0x11);
-  }
-
-  return dados;
+function obterValidade() {
+  return `31/03/${new Date().getFullYear() + 1}`;
 }
 
-function adicionarBits(destino, valor, quantidade) {
-  for (let i = quantidade - 1; i >= 0; i -= 1) {
-    destino.push((valor >>> i) & 1);
-  }
+function aplicarMascaraCpf(evento) {
+  const numeros = somenteNumeros(evento.target.value).slice(0, 11);
+  evento.target.value = numeros
+    .replace(/^(\d{3})(\d)/, "$1.$2")
+    .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1-$2");
 }
 
-function criarMatriz(tamanho, valorInicial) {
-  return Array.from({ length: tamanho }, () => Array(tamanho).fill(valorInicial));
+function aplicarMascaraData(evento) {
+  const numeros = somenteNumeros(evento.target.value).slice(0, 8);
+  evento.target.value = numeros
+    .replace(/^(\d{2})(\d)/, "$1/$2")
+    .replace(/^(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
 }
 
-function desenharPadraoLocalizacao(rowCentro, colCentro, definir) {
-  for (let row = -4; row <= 4; row += 1) {
-    for (let col = -4; col <= 4; col += 1) {
-      const distancia = Math.max(Math.abs(row), Math.abs(col));
-      const ativo = distancia !== 2 && distancia !== 4;
-
-      definir(rowCentro + row, colCentro + col, ativo, true);
-    }
-  }
+function mostrarErroCadastro(texto) {
+  mensagemCadastro.textContent = texto;
 }
 
-function desenharPadraoAlinhamento(rowCentro, colCentro, definir) {
-  for (let row = -2; row <= 2; row += 1) {
-    for (let col = -2; col <= 2; col += 1) {
-      const distancia = Math.max(Math.abs(row), Math.abs(col));
-
-      definir(rowCentro + row, colCentro + col, distancia !== 1, true);
-    }
-  }
+function limparErroCadastro() {
+  mensagemCadastro.textContent = "";
 }
 
-function desenharSincronismo(tamanho, definir) {
-  for (let i = 8; i < tamanho - 8; i += 1) {
-    const ativo = i % 2 === 0;
-
-    definir(6, i, ativo, true);
-    definir(i, 6, ativo, true);
-  }
+function normalizarTexto(valor) {
+  return valor.trim().replace(/\s+/g, " ");
 }
 
-function desenharFormato(tamanho, mascara, definir) {
-  const bits = calcularBitsFormato(1, mascara);
-
-  for (let i = 0; i <= 5; i += 1) {
-    definir(i, 8, lerBit(bits, i), true);
-  }
-
-  definir(7, 8, lerBit(bits, 6), true);
-  definir(8, 8, lerBit(bits, 7), true);
-  definir(8, 7, lerBit(bits, 8), true);
-
-  for (let i = 9; i < 15; i += 1) {
-    definir(8, 14 - i, lerBit(bits, i), true);
-  }
-
-  for (let i = 0; i < 8; i += 1) {
-    definir(tamanho - 1 - i, 8, lerBit(bits, i), true);
-  }
-
-  for (let i = 8; i < 15; i += 1) {
-    definir(8, tamanho - 15 + i, lerBit(bits, i), true);
-  }
-
-  definir(tamanho - 8, 8, true, true);
+function somenteNumeros(valor) {
+  return String(valor || "").replace(/\D/g, "");
 }
 
-function preencherDados(codewords, modulos, reservado, mascara) {
-  const tamanho = modulos.length;
-  let indiceBit = 0;
-  let subindo = true;
-
-  for (let colDireita = tamanho - 1; colDireita >= 1; colDireita -= 2) {
-    if (colDireita === 6) {
-      colDireita -= 1;
-    }
-
-    for (let vertical = 0; vertical < tamanho; vertical += 1) {
-      const row = subindo ? tamanho - 1 - vertical : vertical;
-
-      for (let deslocamento = 0; deslocamento < 2; deslocamento += 1) {
-        const col = colDireita - deslocamento;
-
-        if (reservado[row][col]) {
-          continue;
-        }
-
-        let ativo = false;
-
-        if (indiceBit < codewords.length * 8) {
-          ativo = ((codewords[indiceBit >>> 3] >>> (7 - (indiceBit & 7))) & 1) === 1;
-          indiceBit += 1;
-        }
-
-        if (aplicarMascara(mascara, row, col)) {
-          ativo = !ativo;
-        }
-
-        modulos[row][col] = ativo;
-      }
-    }
-
-    subindo = !subindo;
-  }
+function normalizarCodigo(valor) {
+  return String(valor || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
 }
-
-function aplicarMascara(mascara, row, col) {
-  if (mascara === 0) {
-    return (row + col) % 2 === 0;
-  }
-
-  return false;
-}
-
-function calcularBitsFormato(nivelErro, mascara) {
-  let dados = (nivelErro << 3) | mascara;
-  let resto = dados;
-
-  for (let i = 0; i < 10; i += 1) {
-    resto = (resto << 1) ^ ((resto >>> 9) * 0x537);
-  }
-
-  return ((dados << 10) | resto) ^ 0x5412;
-}
-
-function lerBit(valor, indice) {
-  return ((valor >>> indice) & 1) === 1;
-}
-
-function criarCorrecaoErro(dados, quantidade) {
-  const gerador = criarPolinomioGerador(quantidade);
-  const resultado = Array(quantidade).fill(0);
-
-  dados.forEach((byte) => {
-    const fator = byte ^ resultado.shift();
-    resultado.push(0);
-
-    gerador.slice(1).forEach((coeficiente, indice) => {
-      resultado[indice] ^= multiplicarGalois(coeficiente, fator);
-    });
-  });
-
-  return resultado;
-}
-
-function criarPolinomioGerador(grau) {
-  let polinomio = [1];
-
-  for (let i = 0; i < grau; i += 1) {
-    polinomio = multiplicarPolinomios(polinomio, [1, potenciaGalois(i)]);
-  }
-
-  return polinomio;
-}
-
-function multiplicarPolinomios(a, b) {
-  const resultado = Array(a.length + b.length - 1).fill(0);
-
-  a.forEach((valorA, i) => {
-    b.forEach((valorB, j) => {
-      resultado[i + j] ^= multiplicarGalois(valorA, valorB);
-    });
-  });
-
-  return resultado;
-}
-
-function multiplicarGalois(a, b) {
-  if (a === 0 || b === 0) {
-    return 0;
-  }
-
-  return QR_EXP[QR_LOG[a] + QR_LOG[b]];
-}
-
-function potenciaGalois(expoente) {
-  return QR_EXP[expoente];
-}
-
-function criarTabelasGalois() {
-  const exp = Array(512).fill(0);
-  const log = Array(256).fill(0);
-  let valor = 1;
-
-  for (let i = 0; i < 255; i += 1) {
-    exp[i] = valor;
-    log[valor] = i;
-    valor <<= 1;
-
-    if (valor & 0x100) {
-      valor ^= 0x11d;
-    }
-  }
-
-  for (let i = 255; i < 512; i += 1) {
-    exp[i] = exp[i - 255];
-  }
-
-  return { exp, log };
-}
-
-const QR_TABELAS = criarTabelasGalois();
-const QR_EXP = QR_TABELAS.exp;
-const QR_LOG = QR_TABELAS.log;
 
 function registrarServiceWorker() {
   if (!("serviceWorker" in navigator)) {

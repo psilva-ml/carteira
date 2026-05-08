@@ -1,5 +1,5 @@
 // Cache estático do PWA. A versão deve mudar quando os arquivos principais mudarem.
-const CACHE_NAME = "carteirinha-fesn-v7";
+const CACHE_NAME = "carteirinha-fesn-v8";
 
 const ARQUIVOS_OFFLINE = [
   "./",
