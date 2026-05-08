@@ -2,6 +2,7 @@
 
 App estático em HTML, CSS e JavaScript puro, com login simulado, tela de credencial e cache offline via Service Worker.
 O QR Code da credencial aponta para a página local `CIE.html`, que também é salva no cache offline junto com a pasta `CIE_files`.
+Ao abrir o app sem sessão ativa, ele mostra as imagens da pasta `telas` antes do login: `tela1.jpeg` por 3 segundos, depois `tela2.jpeg` por toque e `tela3.jpeg` por toque.
 
 Ao publicar, o QR Code usa automaticamente o domínio aberto no navegador. Exemplo: se o app estiver em `https://seu-projeto.pages.dev`, a câmera vai ler `https://seu-projeto.pages.dev/CIE.html`.
 

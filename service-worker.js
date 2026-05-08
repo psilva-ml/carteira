@@ -1,5 +1,5 @@
 // Cache estático do PWA. A versão deve mudar quando os arquivos principais mudarem.
-const CACHE_NAME = "carteirinha-fesn-v3";
+const CACHE_NAME = "carteirinha-fesn-v4";
 
 const ARQUIVOS_OFFLINE = [
   "./",
@@ -12,6 +12,9 @@ const ARQUIVOS_OFFLINE = [
   "./assets/logo-dne-color.png",
   "./assets/student-photo.jpg",
   "./assets/qr-code.png",
+  "./telas/tela1.jpeg",
+  "./telas/tela2.jpeg",
+  "./telas/tela3.jpeg",
   "./CIE.html",
   "./CIE_files/fesn.png",
   "./CIE_files/logo.png",

@@ -18,7 +18,13 @@
   <noscript>Ative o JavaScript para usar a carteirinha offline.</noscript>
 
   <main id="app">
-    <section id="loginView" class="screen login-screen" aria-labelledby="loginTitle">
+    <section id="introView" class="screen intro-screen" aria-label="Apresentação inicial">
+      <button id="introButton" class="intro-button" type="button" aria-label="Avançar apresentação">
+        <img id="introImage" class="intro-image" src="./telas/tela1.jpeg" alt="">
+      </button>
+    </section>
+
+    <section id="loginView" class="screen login-screen hidden" aria-labelledby="loginTitle">
       <article class="login-card" aria-label="Entrar na carteirinha">
         <div class="login-header">
           <span class="badge">Consulta Rápida</span>

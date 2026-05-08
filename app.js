@@ -1,16 +1,24 @@
 // Chave usada para simular uma sessão local, sem backend.
 const SESSION_KEY = "carteirinha_fesn_sessao";
 const CIE_PATH = "./CIE.html";
+const TELAS_INICIAIS = [
+  "./telas/tela1.jpeg",
+  "./telas/tela2.jpeg",
+  "./telas/tela3.jpeg",
+];
 
 // Opcional: depois de publicar, você pode colocar aqui a URL final do Cloudflare.
 // Se ficar vazio, o app monta automaticamente a URL usando o domínio aberto.
 const CIE_URL_PUBLICA = "";
 
 const telas = {
+  introducao: document.querySelector("#introView"),
   login: document.querySelector("#loginView"),
   credencial: document.querySelector("#credentialView"),
 };
 
+const introButton = document.querySelector("#introButton");
+const introImage = document.querySelector("#introImage");
 const formulario = document.querySelector("#loginForm");
 const campoDocumento = document.querySelector("#documento");
 const campoSenha = document.querySelector("#senha");
@@ -21,6 +29,8 @@ const anoAtual = document.querySelector("#anoAtual");
 const qrCanvas = document.querySelector("#qrCanvas");
 const qrLink = document.querySelector("#qrLink");
 const certificateLink = document.querySelector("#certificateLink");
+let telaInicialAtual = 0;
+let timerTelaInicial = null;
 
 document.addEventListener("DOMContentLoaded", iniciarApp);
 
@@ -35,10 +45,11 @@ function iniciarApp() {
     return;
   }
 
-  mostrarLogin();
+  mostrarIntroducao();
 }
 
 function configurarEventos() {
+  introButton.addEventListener("click", avancarTelaInicial);
   formulario.addEventListener("submit", entrar);
   botaoLogout.addEventListener("click", sair);
   window.addEventListener("hashchange", sincronizarRota);
@@ -103,10 +114,39 @@ function mostrarCredencial() {
   alternarTela("credencial", true);
 }
 
+function mostrarIntroducao() {
+  alternarTela("introducao", false);
+  exibirTelaInicial(0);
+  timerTelaInicial = window.setTimeout(avancarTelaInicial, 3000);
+}
+
+function avancarTelaInicial() {
+  if (timerTelaInicial) {
+    window.clearTimeout(timerTelaInicial);
+    timerTelaInicial = null;
+  }
+
+  if (telaInicialAtual < TELAS_INICIAIS.length - 1) {
+    exibirTelaInicial(telaInicialAtual + 1);
+    return;
+  }
+
+  mostrarLogin();
+}
+
+function exibirTelaInicial(indice) {
+  telaInicialAtual = indice;
+  introImage.src = TELAS_INICIAIS[indice];
+  introImage.alt = "";
+}
+
 function alternarTela(nomeTela, atualizarHash) {
+  const abrirIntroducao = nomeTela === "introducao";
+  const abrirLogin = nomeTela === "login";
   const abrirCredencial = nomeTela === "credencial";
 
-  telas.login.classList.toggle("hidden", abrirCredencial);
+  telas.introducao.classList.toggle("hidden", !abrirIntroducao);
+  telas.login.classList.toggle("hidden", !abrirLogin);
   telas.credencial.classList.toggle("hidden", !abrirCredencial);
 
   document.title = abrirCredencial

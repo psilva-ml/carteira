@@ -14,6 +14,7 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 - `assets/student-photo.jpg`: foto do estudante.
 - `assets/qr-code.png`: QR Code de autenticidade.
 - `assets/app-icon.svg`: ícone simples do PWA.
+- `telas/tela1.jpeg`, `telas/tela2.jpeg`, `telas/tela3.jpeg`: telas fullscreen exibidas antes do login.
 
 ## Plano aplicado
 
@@ -34,3 +35,4 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 - O ano grande da credencial é calculado automaticamente com o ano atual.
 - O QR Code é gerado no navegador com URL absoluta e aponta para `CIE.html` no mesmo domínio publicado.
 - Se precisar forçar uma URL específica, preencha `CIE_URL_PUBLICA` no início de `app.js`.
+- Antes do login, o app mostra `tela1.jpeg` por 3 segundos, depois avança por clique para `tela2.jpeg`, `tela3.jpeg` e login.
