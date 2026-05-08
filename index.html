@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#343474">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Carteirinha">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="PWA offline de carteirinha estudantil com login simulado.">
+  <title>FESN | Carteirinha Estudantil</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/app-icon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <noscript>Ative o JavaScript para usar a carteirinha offline.</noscript>
+
+  <main id="app">
+    <section id="loginView" class="screen login-screen" aria-labelledby="loginTitle">
+      <article class="login-card" aria-label="Entrar na carteirinha">
+        <div class="login-header">
+          <span class="badge">Consulta Rápida</span>
+          <img class="login-logo" src="./assets/logo-fesn-short.svg" alt="Logo FESN" width="104" height="104">
+          <div class="login-copy">
+            <h1 id="loginTitle">Encontrar carteirinha</h1>
+            <p>Digite o CPF ou o código de uso (Nº da CIE) e sua senha para localizar a carteirinha do estudante.</p>
+          </div>
+        </div>
+
+        <form id="loginForm" class="login-form" novalidate>
+          <div class="field-group">
+            <label for="documento">CPF ou código de uso (Nº da CIE)</label>
+            <input
+              id="documento"
+              name="documento"
+              type="text"
+              inputmode="text"
+              autocomplete="username"
+              placeholder="000.000.000-00"
+              required
+            >
+            <small>Informe o CPF, com ou sem pontuação, ou o código de uso.</small>
+          </div>
+
+          <div class="field-group">
+            <label for="senha">Senha</label>
+            <input
+              id="senha"
+              name="senha"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Digite sua senha"
+              required
+            >
+          </div>
+
+          <p id="loginError" class="form-error" role="alert" aria-live="polite"></p>
+          <button class="primary-button" type="submit">Entrar</button>
+        </form>
+
+        <div class="separator" aria-hidden="true"></div>
+        <p class="login-help">Problemas para encontrar? Verifique se o CPF, o código de uso ou a senha foram informados corretamente.</p>
+      </article>
+    </section>
+
+    <section id="credentialView" class="screen credential-screen hidden" aria-labelledby="credentialTitle">
+      <div class="credential-wrapper">
+        <header class="credential-heading">
+          <h1 id="credentialTitle">MINHA CARTEIRINHA DE ESTUDANTE</h1>
+        </header>
+
+        <section class="student-card" aria-label="Carteirinha estudantil">
+          <div class="logos-row">
+            <img src="./assets/logo-dne-color.png" alt="Logo DNE" width="150" height="50">
+            <img src="./assets/logo-fesn-short.svg" alt="Logo FESN" width="150" height="50">
+          </div>
+
+          <div class="identity-row">
+            <figure class="photo-frame">
+              <img src="./assets/student-photo.jpg" alt="Foto de PEDRO HENRIQUE OLIVEIRA SILVA">
+            </figure>
+
+            <div class="qr-card" aria-label="QR Code de autenticidade">
+              <div class="qr-frame">
+                <img src="./assets/qr-code.png" alt="QR Code de autenticidade">
+              </div>
+              <div class="cie-code">
+                <p>Nº DA CIE</p>
+                <strong>B592LCA2</strong>
+              </div>
+            </div>
+          </div>
+
+          <article class="info-panel">
+            <div class="student-info">
+              <p class="student-name">PEDRO HENRIQUE OLIVEIRA SILVA</p>
+
+              <div class="spacer" aria-hidden="true"></div>
+
+              <p><strong>INST. DE ENSINO: </strong><span>IFRS</span></p>
+              <p><strong>CURSO: </strong><span>RASPBERRY PI BÁSICO</span></p>
+              <p><strong>TIPO DE CURSO: </strong><span>TÉCNICO</span></p>
+
+              <div class="spacer" aria-hidden="true"></div>
+
+              <p><strong>CPF: </strong><span>11166091694</span></p>
+              <p><strong>DATA DE NASC: </strong><span>18/05/1993</span></p>
+              <p><strong>VALIDADE: </strong><span>31/03/2027</span></p>
+
+              <div class="year-row">
+                <span>2026</span>
+              </div>
+            </div>
+          </article>
+
+          <footer class="issuer-footer">
+            <p>FEDERACAO DOS ESTUDANTES NACIONAL</p>
+            <small>Valide seu DNE em: validadordnefesn.org.br</small>
+          </footer>
+
+          <a class="certificate-link" href="https://fesn.appcie.org/B592LCA2" target="_blank" rel="noreferrer">
+            <span aria-hidden="true">✓</span>
+            Certificado
+          </a>
+
+          <button id="logoutButton" class="secondary-button" type="button">Buscar outra carteirinha</button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

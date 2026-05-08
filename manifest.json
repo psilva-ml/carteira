@@ -1,0 +1,20 @@
+{
+  "name": "FESN | Carteirinha Estudantil",
+  "short_name": "Carteirinha",
+  "description": "Carteirinha estudantil offline com login simulado.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#343474",
+  "icons": [
+    {
+      "src": "./assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

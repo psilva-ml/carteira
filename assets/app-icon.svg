@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Carteirinha FESN">
+  <rect width="512" height="512" rx="112" fill="#343474"/>
+  <path d="M120 150h272a34 34 0 0 1 34 34v168a34 34 0 0 1-34 34H120a34 34 0 0 1-34-34V184a34 34 0 0 1 34-34z" fill="#ffffff"/>
+  <path d="M86 214h340v42H86z" fill="#f7d635"/>
+  <circle cx="164" cy="314" r="42" fill="#d6d4ec"/>
+  <path d="M236 288h122v22H236zM236 326h92v22h-92z" fill="#343474"/>
+  <text x="256" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="800" fill="#ffffff">FESN</text>
+</svg>
