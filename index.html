@@ -114,14 +114,91 @@
             <small>Valide seu DNE em: validadordnefesn.org.br</small>
           </footer>
 
-          <a id="certificateLink" class="certificate-link" href="./CIE.html">
+          <button id="certificateButton" class="certificate-link" type="button">
             <span aria-hidden="true">✓</span>
             Certificado
-          </a>
+          </button>
 
           <button id="logoutButton" class="secondary-button" type="button">Buscar outra carteirinha</button>
         </section>
       </div>
+    </section>
+
+    <section id="certificateView" class="screen certificate-screen hidden" aria-labelledby="certificateTitle">
+      <header class="certificate-topbar">
+        <div class="certificate-logos">
+          <img src="./CIE_files/fesn.png" alt="Logo FESN">
+          <img src="./CIE_files/logo.png" alt="Logo DNE">
+        </div>
+      </header>
+
+      <main class="certificate-main">
+        <section class="certificate-panel" aria-label="Dados do Documento Nacional do Estudante">
+          <div class="certificate-heading">
+            <h1 id="certificateTitle">FEDERACAO DOS ESTUDANTES NACIONAL</h1>
+            <h2>DOCUMENTO NACIONAL DO ESTUDANTE</h2>
+            <h3>VALIDAÇÃO E VERIFICAÇÃO</h3>
+          </div>
+
+          <div class="certificate-content">
+            <div class="certificate-data">
+              <div class="certificate-group">DADOS PESSOAIS</div>
+              <div class="certificate-field">
+                <span>Nome</span>
+                <strong>PEDRO HENRIQUE OLIVEIRA SILVA</strong>
+              </div>
+              <div class="certificate-field">
+                <span>Nascimento</span>
+                <strong>18/05/1993</strong>
+              </div>
+              <div class="certificate-field">
+                <span>CPF</span>
+                <strong>11166091694</strong>
+              </div>
+
+              <div class="certificate-group">DADOS ESTUDANTIS</div>
+              <div class="certificate-field">
+                <span>Instituição de Ensino</span>
+                <strong>UFJF</strong>
+              </div>
+              <div class="certificate-field">
+                <span>Grau Escolaridade</span>
+                <strong>DOUTORADO</strong>
+              </div>
+              <div class="certificate-field">
+                <span>Curso</span>
+                <strong>ENGENHARIA ELÉTRICA</strong>
+              </div>
+
+              <div class="certificate-group">DADOS CERTIFICADO DE ATRIBUTO</div>
+              <div class="certificate-field">
+                <span>Emissora (EEA)</span>
+                <strong>FEDERACAO DOS ESTUDANTES NACIONAL</strong>
+              </div>
+              <div class="certificate-field">
+                <span>CNPJ</span>
+                <strong>02538407000100</strong>
+              </div>
+              <div class="certificate-field">
+                <span>Validade</span>
+                <strong id="validadeCertificado">31/03/2027</strong>
+              </div>
+              <div class="certificate-field">
+                <span>Local</span>
+                <strong>Rio de Janeiro/RJ</strong>
+              </div>
+            </div>
+
+            <figure class="certificate-photo">
+              <img src="./CIE_files/B592LCA2_app" alt="Foto do estudante">
+            </figure>
+          </div>
+
+          <div class="certificate-actions">
+            <button id="certificateBackButton" class="secondary-button" type="button">Voltar para carteirinha</button>
+          </div>
+        </section>
+      </main>
     </section>
   </main>
 

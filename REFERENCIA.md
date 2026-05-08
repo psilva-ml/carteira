@@ -34,5 +34,5 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 - A validade é calculada automaticamente como `31/03/ano atual + 1`.
 - O ano grande da credencial é calculado automaticamente com o ano atual.
 - O QR Code voltou a usar a imagem original salva em `assets/qr-code.png`.
-- O botão `Certificado` abre `CIE.html` no mesmo domínio publicado.
+- O botão `Certificado` abre uma tela interna no próprio `index.html`, sem depender de rota externa.
 - Antes do login, o app mostra `tela1.jpeg` por 3 segundos, depois avança por clique para `tela2.jpeg`, `tela3.jpeg` e login.

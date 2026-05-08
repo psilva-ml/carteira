@@ -1,20 +1,16 @@
 // Chave usada para simular uma sessão local, sem backend.
 const SESSION_KEY = "carteirinha_fesn_sessao";
-const CIE_PATH = "./CIE.html";
 const TELAS_INICIAIS = [
   "./telas/tela1.jpeg",
   "./telas/tela2.jpeg",
   "./telas/tela3.jpeg",
 ];
 
-// Opcional: depois de publicar, você pode colocar aqui a URL final do Cloudflare.
-// Se ficar vazio, o app monta automaticamente a URL usando o domínio aberto.
-const CIE_URL_PUBLICA = "";
-
 const telas = {
   introducao: document.querySelector("#introView"),
   login: document.querySelector("#loginView"),
   credencial: document.querySelector("#credentialView"),
+  certificado: document.querySelector("#certificateView"),
 };
 
 const introButton = document.querySelector("#introButton");
@@ -24,8 +20,10 @@ const campoDocumento = document.querySelector("#documento");
 const mensagemErro = document.querySelector("#loginError");
 const botaoLogout = document.querySelector("#logoutButton");
 const validadeValor = document.querySelector("#validadeValor");
+const validadeCertificado = document.querySelector("#validadeCertificado");
 const anoAtual = document.querySelector("#anoAtual");
-const certificateLink = document.querySelector("#certificateLink");
+const certificateButton = document.querySelector("#certificateButton");
+const certificateBackButton = document.querySelector("#certificateBackButton");
 let telaInicialAtual = 0;
 let timerTelaInicial = null;
 
@@ -35,7 +33,6 @@ function iniciarApp() {
   registrarServiceWorker();
   configurarEventos();
   atualizarDadosDinamicos();
-  gerarQrCodeCie();
   mostrarIntroducao();
 }
 
@@ -43,6 +40,8 @@ function configurarEventos() {
   introButton.addEventListener("click", avancarTelaInicial);
   formulario.addEventListener("submit", entrar);
   botaoLogout.addEventListener("click", sair);
+  certificateButton.addEventListener("click", mostrarCertificado);
+  certificateBackButton.addEventListener("click", mostrarCredencial);
   window.addEventListener("hashchange", sincronizarRota);
 }
 
@@ -90,6 +89,11 @@ function sincronizarRota() {
     return;
   }
 
+  if (window.location.hash === "#certificado" && temSessaoAtiva()) {
+    alternarTela("certificado", false);
+    return;
+  }
+
   if (!temSessaoAtiva()) {
     alternarTela("login", false);
   }
@@ -102,6 +106,10 @@ function mostrarLogin() {
 
 function mostrarCredencial() {
   alternarTela("credencial", true);
+}
+
+function mostrarCertificado() {
+  alternarTela("certificado", true);
 }
 
 function mostrarIntroducao() {
@@ -134,15 +142,17 @@ function alternarTela(nomeTela, atualizarHash) {
   const abrirIntroducao = nomeTela === "introducao";
   const abrirLogin = nomeTela === "login";
   const abrirCredencial = nomeTela === "credencial";
+  const abrirCertificado = nomeTela === "certificado";
 
   telas.introducao.classList.toggle("hidden", !abrirIntroducao);
   telas.login.classList.toggle("hidden", !abrirLogin);
   telas.credencial.classList.toggle("hidden", !abrirCredencial);
+  telas.certificado.classList.toggle("hidden", !abrirCertificado);
 
-  document.title = abrirCredencial ? "Minha Carteirinha | DNE FESN" : "DNE FESN";
+  document.title = abrirCredencial || abrirCertificado ? "Minha Carteirinha | DNE FESN" : "DNE FESN";
 
   if (atualizarHash) {
-    const hash = abrirCredencial ? "#credencial" : "#login";
+    const hash = abrirCredencial ? "#credencial" : abrirCertificado ? "#certificado" : "#login";
     history.replaceState(null, "", hash);
   }
 }
@@ -161,22 +171,8 @@ function atualizarDadosDinamicos() {
   const ano = new Date().getFullYear();
 
   validadeValor.textContent = `31/03/${ano + 1}`;
+  validadeCertificado.textContent = `31/03/${ano + 1}`;
   anoAtual.textContent = String(ano);
-}
-
-function gerarQrCodeCie() {
-  const destino = obterUrlPublicaCie();
-
-  certificateLink.href = destino;
-  certificateLink.title = destino;
-}
-
-function obterUrlPublicaCie() {
-  if (CIE_URL_PUBLICA.trim()) {
-    return CIE_URL_PUBLICA.trim();
-  }
-
-  return new URL(CIE_PATH, window.location.href).href;
 }
 
 function desenharQrCode(canvas, texto) {
