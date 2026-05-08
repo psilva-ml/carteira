@@ -7,6 +7,8 @@ Ao publicar, o QR Code usa automaticamente o domínio aberto no navegador. Exemp
 
 Se o app instalado no celular abrir com erro em `/index.html`, publique esta versão, remova o app da tela inicial e instale novamente pelo navegador. O manifesto agora inicia pela raiz do site (`./`) e o service worker também aceita `/index`, `/index.html`, `/CIE` e `/CIE.html`.
 
+Se você publicou como Cloudflare Worker e recebeu um domínio `workers.dev`, o arquivo `wrangler.toml` configura o projeto como site estático usando Workers Static Assets. Para Cloudflare Pages, prefira o domínio `*.pages.dev`.
+
 ## Como rodar localmente
 
 Na pasta do projeto, rode:

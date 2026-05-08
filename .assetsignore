@@ -1,0 +1,13 @@
+.git
+.git/**
+node_modules
+node_modules/**
+.DS_Store
+.env
+.env.*
+README.md
+REFERENCIA.md
+FESN _ Carteirinha Estudantil.html
+FESN _ Carteirinha Estudantil_files/**
+FESN _ Carteirinha Estudantil - pag 2.html
+FESN _ Carteirinha Estudantil - pag 2_files/**
