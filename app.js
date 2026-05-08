@@ -21,13 +21,10 @@ const introButton = document.querySelector("#introButton");
 const introImage = document.querySelector("#introImage");
 const formulario = document.querySelector("#loginForm");
 const campoDocumento = document.querySelector("#documento");
-const campoSenha = document.querySelector("#senha");
 const mensagemErro = document.querySelector("#loginError");
 const botaoLogout = document.querySelector("#logoutButton");
 const validadeValor = document.querySelector("#validadeValor");
 const anoAtual = document.querySelector("#anoAtual");
-const qrCanvas = document.querySelector("#qrCanvas");
-const qrLink = document.querySelector("#qrLink");
 const certificateLink = document.querySelector("#certificateLink");
 let telaInicialAtual = 0;
 let timerTelaInicial = null;
@@ -39,12 +36,6 @@ function iniciarApp() {
   configurarEventos();
   atualizarDadosDinamicos();
   gerarQrCodeCie();
-
-  if (temSessaoAtiva()) {
-    mostrarCredencial();
-    return;
-  }
-
   mostrarIntroducao();
 }
 
@@ -59,12 +50,11 @@ function entrar(evento) {
   evento.preventDefault();
 
   const documento = campoDocumento.value.trim();
-  const senha = campoSenha.value.trim();
 
   limparErro();
 
-  if (!documento || !senha) {
-    mostrarErro("Preencha o CPF ou código de uso e a senha para entrar.");
+  if (!documento) {
+    mostrarErro("Preencha o CPF ou código de uso para entrar.");
     return;
   }
 
@@ -149,9 +139,7 @@ function alternarTela(nomeTela, atualizarHash) {
   telas.login.classList.toggle("hidden", !abrirLogin);
   telas.credencial.classList.toggle("hidden", !abrirCredencial);
 
-  document.title = abrirCredencial
-    ? "Minha Carteirinha | FESN"
-    : "FESN | Carteirinha Estudantil";
+  document.title = abrirCredencial ? "Minha Carteirinha | DNE FESN" : "DNE FESN";
 
   if (atualizarHash) {
     const hash = abrirCredencial ? "#credencial" : "#login";
@@ -162,13 +150,11 @@ function alternarTela(nomeTela, atualizarHash) {
 function mostrarErro(texto) {
   mensagemErro.textContent = texto;
   campoDocumento.setAttribute("aria-invalid", String(!campoDocumento.value.trim()));
-  campoSenha.setAttribute("aria-invalid", String(!campoSenha.value.trim()));
 }
 
 function limparErro() {
   mensagemErro.textContent = "";
   campoDocumento.removeAttribute("aria-invalid");
-  campoSenha.removeAttribute("aria-invalid");
 }
 
 function atualizarDadosDinamicos() {
@@ -181,11 +167,8 @@ function atualizarDadosDinamicos() {
 function gerarQrCodeCie() {
   const destino = obterUrlPublicaCie();
 
-  qrLink.href = destino;
-  qrLink.title = destino;
   certificateLink.href = destino;
   certificateLink.title = destino;
-  desenharQrCode(qrCanvas, destino);
 }
 
 function obterUrlPublicaCie() {

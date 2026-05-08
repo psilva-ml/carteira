@@ -1,6 +1,6 @@
-# FESN | Carteirinha Estudantil PWA
+# DNE FESN PWA
 
-App estático em HTML, CSS e JavaScript puro, com login simulado, tela de credencial e cache offline via Service Worker.
+App estático em HTML, CSS e JavaScript puro, com login simulado por CPF, tela de credencial e cache offline via Service Worker.
 O QR Code da credencial aponta para a página local `CIE.html`, que também é salva no cache offline junto com a pasta `CIE_files`.
 Ao abrir o app sem sessão ativa, ele mostra as imagens da pasta `telas` antes do login: `tela1.jpeg` por 3 segundos, depois `tela2.jpeg` por toque e `tela3.jpeg` por toque.
 
@@ -23,7 +23,7 @@ Depois abra a URL exibida no terminal, normalmente `http://localhost:3000`.
 ## Como testar no navegador
 
 1. Abra o app pelo endereço local.
-2. Preencha CPF/código e senha com qualquer valor.
+2. Preencha CPF/código com qualquer valor.
 3. Clique em **Entrar**.
 4. A tela da credencial deve aparecer.
 5. Clique em **Buscar outra carteirinha** para limpar a sessão e voltar ao login.

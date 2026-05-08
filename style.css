@@ -326,16 +326,12 @@ noscript {
   background: rgba(255, 255, 255, 0.72);
 }
 
-.qr-link {
-  display: block;
-}
-
-.qr-frame canvas {
+.qr-frame img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 .cie-code {

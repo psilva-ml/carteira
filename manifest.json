@@ -1,14 +1,14 @@
 {
-  "name": "FESN | Carteirinha Estudantil",
-  "short_name": "Carteirinha",
-  "description": "Carteirinha estudantil offline com login simulado.",
+  "name": "DNE FESN",
+  "short_name": "DNE FESN",
+  "description": "DNE FESN offline com login simulado por CPF.",
   "lang": "pt-BR",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f8fafc",
+  "background_color": "#ffffff",
   "theme_color": "#343474",
   "icons": [
     {
