@@ -5,6 +5,8 @@ O QR Code da credencial aponta para a página local `CIE.html`, que também é s
 
 Ao publicar, o QR Code usa automaticamente o domínio aberto no navegador. Exemplo: se o app estiver em `https://seu-projeto.pages.dev`, a câmera vai ler `https://seu-projeto.pages.dev/CIE.html`.
 
+Se o app instalado no celular abrir com erro em `/index.html`, publique esta versão, remova o app da tela inicial e instale novamente pelo navegador. O manifesto agora inicia pela raiz do site (`./`) e o service worker também aceita `/index`, `/index.html`, `/CIE` e `/CIE.html`.
+
 ## Como rodar localmente
 
 Na pasta do projeto, rode:
