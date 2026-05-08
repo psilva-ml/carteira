@@ -282,9 +282,9 @@ noscript {
 }
 
 .qr-card {
-  width: 46%;
+  width: 48%;
   min-width: 132px;
-  max-width: 160px;
+  max-width: 168px;
   padding: 12px;
   border-radius: var(--radius);
   background: #ffffff;

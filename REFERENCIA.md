@@ -32,4 +32,5 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 - A credencial usa UFJF, Engenharia Elétrica e Doutorado.
 - A validade é calculada automaticamente como `31/03/ano atual + 1`.
 - O ano grande da credencial é calculado automaticamente com o ano atual.
-- O QR Code é gerado no navegador e aponta para `CIE.html` no mesmo domínio publicado.
+- O QR Code é gerado no navegador com URL absoluta e aponta para `CIE.html` no mesmo domínio publicado.
+- Se precisar forçar uma URL específica, preencha `CIE_URL_PUBLICA` no início de `app.js`.

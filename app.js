@@ -1,5 +1,10 @@
 // Chave usada para simular uma sessão local, sem backend.
 const SESSION_KEY = "carteirinha_fesn_sessao";
+const CIE_PATH = "./CIE.html";
+
+// Opcional: depois de publicar, você pode colocar aqui a URL final do Cloudflare.
+// Se ficar vazio, o app monta automaticamente a URL usando o domínio aberto.
+const CIE_URL_PUBLICA = "";
 
 const telas = {
   login: document.querySelector("#loginView"),
@@ -134,11 +139,21 @@ function atualizarDadosDinamicos() {
 }
 
 function gerarQrCodeCie() {
-  const destino = new URL("./CIE.html", window.location.href).href;
+  const destino = obterUrlPublicaCie();
 
   qrLink.href = destino;
+  qrLink.title = destino;
   certificateLink.href = destino;
+  certificateLink.title = destino;
   desenharQrCode(qrCanvas, destino);
+}
+
+function obterUrlPublicaCie() {
+  if (CIE_URL_PUBLICA.trim()) {
+    return CIE_URL_PUBLICA.trim();
+  }
+
+  return new URL(CIE_PATH, window.location.href).href;
 }
 
 function desenharQrCode(canvas, texto) {
