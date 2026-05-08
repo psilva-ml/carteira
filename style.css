@@ -296,10 +296,16 @@ noscript {
   background: rgba(255, 255, 255, 0.72);
 }
 
-.qr-frame img {
+.qr-link {
+  display: block;
+}
+
+.qr-frame canvas {
+  display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 1;
-  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .cie-code {
@@ -348,7 +354,7 @@ noscript {
 
 .year-row span {
   color: #2563eb;
-  font-size: 22px;
+  font-size: 30px;
   line-height: 1;
   font-weight: 800;
 }

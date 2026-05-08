@@ -1,6 +1,7 @@
 # FESN | Carteirinha Estudantil PWA
 
 App estático em HTML, CSS e JavaScript puro, com login simulado, tela de credencial e cache offline via Service Worker.
+O QR Code da credencial aponta para a página local `CIE.html`, que também é salva no cache offline junto com a pasta `CIE_files`.
 
 ## Como rodar localmente
 

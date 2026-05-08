@@ -83,9 +83,9 @@
             </figure>
 
             <div class="qr-card" aria-label="QR Code de autenticidade">
-              <div class="qr-frame">
-                <img src="./assets/qr-code.png" alt="QR Code de autenticidade">
-              </div>
+              <a id="qrLink" class="qr-frame qr-link" href="./CIE.html" aria-label="Abrir página de validação CIE">
+                <canvas id="qrCanvas" width="256" height="256" aria-label="QR Code de autenticidade"></canvas>
+              </a>
               <div class="cie-code">
                 <p>Nº DA CIE</p>
                 <strong>B592LCA2</strong>
@@ -99,18 +99,18 @@
 
               <div class="spacer" aria-hidden="true"></div>
 
-              <p><strong>INST. DE ENSINO: </strong><span>IFRS</span></p>
-              <p><strong>CURSO: </strong><span>RASPBERRY PI BÁSICO</span></p>
-              <p><strong>TIPO DE CURSO: </strong><span>TÉCNICO</span></p>
+              <p><strong>INST. DE ENSINO: </strong><span>UFJF</span></p>
+              <p><strong>CURSO: </strong><span>ENGENHARIA ELÉTRICA</span></p>
+              <p><strong>TIPO DE CURSO: </strong><span>DOUTORADO</span></p>
 
               <div class="spacer" aria-hidden="true"></div>
 
               <p><strong>CPF: </strong><span>11166091694</span></p>
               <p><strong>DATA DE NASC: </strong><span>18/05/1993</span></p>
-              <p><strong>VALIDADE: </strong><span>31/03/2027</span></p>
+              <p><strong>VALIDADE: </strong><span id="validadeValor">31/03/2027</span></p>
 
               <div class="year-row">
-                <span>2026</span>
+                <span id="anoAtual">2026</span>
               </div>
             </div>
           </article>
@@ -120,7 +120,7 @@
             <small>Valide seu DNE em: validadordnefesn.org.br</small>
           </footer>
 
-          <a class="certificate-link" href="https://fesn.appcie.org/B592LCA2" target="_blank" rel="noreferrer">
+          <a id="certificateLink" class="certificate-link" href="./CIE.html">
             <span aria-hidden="true">✓</span>
             Certificado
           </a>
