@@ -5,6 +5,7 @@ node_modules/**
 .DS_Store
 .env
 .env.*
+*:Zone.Identifier
 README.md
 REFERENCIA.md
 FESN _ Carteirinha Estudantil.html

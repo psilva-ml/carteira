@@ -13,7 +13,7 @@ Este arquivo registra as referências salvas no workspace e as decisões usadas 
 - `assets/logo-dne-color.png`: logo DNE usada na credencial.
 - `assets/student-photo.jpg`: foto do estudante.
 - `assets/qr-code.png`: QR Code de autenticidade.
-- `assets/app-icon.svg`: ícone simples do PWA.
+- `assets/play_store_512.png`: ícone do PWA.
 - `telas/tela1.jpeg`, `telas/tela2.jpeg`, `telas/tela3.jpeg`: telas fullscreen exibidas antes do login.
 
 ## Plano aplicado

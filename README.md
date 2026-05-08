@@ -7,6 +7,7 @@ Ao abrir o app sem sessão ativa, ele mostra as imagens da pasta `telas` antes d
 Ao publicar, o QR Code usa automaticamente o domínio aberto no navegador. Exemplo: se o app estiver em `https://seu-projeto.pages.dev`, a câmera vai ler `https://seu-projeto.pages.dev/CIE.html`.
 
 Se o app instalado no celular abrir com erro em `/index.html`, publique esta versão, remova o app da tela inicial e instale novamente pelo navegador. O manifesto agora inicia pela raiz do site (`./`) e o service worker também aceita `/index`, `/index.html`, `/CIE` e `/CIE.html`.
+O ícone do app usa `assets/play_store_512.png`.
 
 Se você publicou como Cloudflare Worker e recebeu um domínio `workers.dev`, o arquivo `wrangler.toml` configura o projeto como site estático usando Workers Static Assets. Para Cloudflare Pages, prefira o domínio `*.pages.dev`.
 

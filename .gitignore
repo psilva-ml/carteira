@@ -6,3 +6,4 @@ dist/
 build/
 .wrangler/
 .dev.vars
+*:Zone.Identifier
